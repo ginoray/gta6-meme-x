@@ -28,6 +28,13 @@ async function main() {
 
   await mkdir(outputDir, { recursive: true });
   await copyFile(source, target);
+
+  // Read the handed-in copy back and confirm it still names the same post:
+  // a truncated or mangled copy would silently void the entry at the gate.
+  const landed = JSON.parse(await readFile(target, 'utf8'));
+  if (landed.url !== parsed.url) {
+    throw new Error(`copied POST.json does not match the source: ${JSON.stringify(landed)}`);
+  }
 }
 
 main().catch((err) => {
